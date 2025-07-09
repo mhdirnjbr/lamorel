@@ -10,7 +10,7 @@ from .base_llm import BaseLLM
 from transformers import BitsAndBytesConfig
 
 # Accelerate
-from accelerate import infer_auto_device_map, init_empty_weights
+from accelerate import infer_auto_device_map, init_empty_weights, dispatch_model
 from contextlib import nullcontext
 
 
@@ -37,28 +37,29 @@ class HF_LLM(BaseLLM):
             self._LLM_model = _model_constructor(**constructor_kwargs).to('cpu')
         else:
             # Set model parallelism
-            with init_empty_weights():
-                self._LLM_model = _model_constructor(**constructor_kwargs)
-                self._LLM_model.tie_weights()
-                device_map = infer_auto_device_map(
-                    model=self._LLM_model,
-                    max_memory={
-                        _device: torch.cuda.mem_get_info(f'cuda:{_device}')[0]
-                        for _device in devices
-                    }
-                )
-
-            constructor_kwargs["device_map"] = device_map
-            if args.load_in_4bit:
-                bnb_config = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_use_double_quant=True,
-                    bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.bfloat16
-                )
-                constructor_kwargs["quantization_config"] = bnb_config
-
             self._LLM_model = _model_constructor(**constructor_kwargs)
+            self._LLM_model.tie_weights()
+            device_map = infer_auto_device_map(
+                model=self._LLM_model,
+                max_memory={
+                    _device: torch.cuda.mem_get_info(f'cuda:{_device}')[0]
+                    for _device in devices
+                }
+            )
+            self._LLM_model = dispatch_model(self._LLM_model, device_map=device_map)
+
+            if args.pretrained:
+                constructor_kwargs["device_map"] = device_map
+                if args.load_in_4bit:
+                    bnb_config = BitsAndBytesConfig(
+                        load_in_4bit=True,
+                        bnb_4bit_use_double_quant=True,
+                        bnb_4bit_quant_type="nf4",
+                        bnb_4bit_compute_dtype=torch.bfloat16
+                    )
+                    constructor_kwargs["quantization_config"] = bnb_config
+
+                self._LLM_model = _model_constructor(**constructor_kwargs)
 
         # Set minibatch generation
         self.__input_encoder = None
