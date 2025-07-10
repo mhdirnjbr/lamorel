@@ -60,6 +60,24 @@ class HF_LLM(BaseLLM):
                     constructor_kwargs["quantization_config"] = bnb_config
 
                 self._LLM_model = _model_constructor(**constructor_kwargs)
+                
+                # test_cases = [
+                #         ('Possible action of the agent: turn left, turn right, go forward, pick up, drop, toggle \n Goal of the agent: go to the yellow ball \n Observation 0: You see a wall 1 step left, You see a grey key 4 steps forward, You see a green ball 2 steps forward, You see a green box 1 step right and 3 steps forward, You see a yellow ball 2 steps right and 4 steps forward, You see a purple box 3 steps right and 1 step forward, \n Action 0: pick up \n Observation 1: You see a wall 1 step left, You see a grey key 4 steps forward, You see a green ball 2 steps forward, You see a green box 1 step right and 3 steps forward, You see a yellow ball 2 steps right and 4 steps forward, You see a purple box 3 steps right and 1 step forward, \n Action 1: pick up \n Observation 2: You see a wall 1 step left, You see a grey key 4 steps forward, You see a green ball 2 steps forward, You see a green box 1 step right and 3 steps forward, You see a yellow ball 2 steps right and 4 steps forward, You see a purple box 3 steps right and 1 step forward, \n Action 2: ', "go forward"),
+                #         ('Possible action of the agent: turn left, turn right, go forward, pick up, drop, toggle \n Goal of the agent: go to the green ball \n Observation 0: You see a wall 2 steps forward, You see a wall 1 step right, You see a grey box 2 steps left, \n Action 0: pick up \n Observation 1: You see a wall 2 steps forward, You see a wall 1 step right, You see a grey box 2 steps left, \n Action 1: pick up \n Observation 2: You see a wall 2 steps forward, You see a wall 1 step right, You see a grey box 2 steps left, \n Action 2: ', "turn right"),
+                #         ('Possible action of the agent: turn left, turn right, go forward, pick up, drop, toggle \n Goal of the agent: go to the purple box \n Observation 0: You see a wall 1 step right, You see a blue key 3 steps left and 4 steps forward, You see a purple box 2 steps left and 4 steps forward, You see a green key 2 steps left and 3 steps forward, You see a red ball 2 steps left and 2 steps forward, You see a yellow box 1 step left and 1 step forward, You see a blue ball 3 steps forward, \n Action 0: pick up \n Observation 1: You see a wall 1 step right, You see a blue key 3 steps left and 4 steps forward, You see a purple box 2 steps left and 4 steps forward, You see a green key 2 steps left and 3 steps forward, You see a red ball 2 steps left and 2 steps forward, You see a yellow box 1 step left and 1 step forward, You see a blue ball 3 steps forward, \n Action 1: pick up \n Observation 2: You see a wall 1 step right, You see a blue key 3 steps left and 4 steps forward, You see a purple box 2 steps left and 4 steps forward, You see a green key 2 steps left and 3 steps forward, You see a red ball 2 steps left and 2 steps forward, You see a yellow box 1 step left and 1 step forward, You see a blue ball 3 steps forward, \n Action 2: ', "go forward"),
+                #         ('hello', "turn right"),
+                #         ('good bye', "go forward"),
+                #     ]
+                # device = self._LLM_model.device
+                # for prompt, action in test_cases:
+                #     inputs = self._LLM_tokenizer(prompt, return_tensors="pt").to(device) 
+                #     outputs = self._LLM_model.generate(**inputs)
+                #     decoded_output = self._LLM_tokenizer.decode(outputs[0], skip_special_tokens=True)
+                #     passed = action.lower() in decoded_output.lower()
+                #     print(f"Test: {'✅' if passed else '❌'}")
+                #     print(f"Prompt: {prompt}")
+                #     print(f"Expected action: {action}")
+                #     print(f"Decoded output: {decoded_output}")     
 
         # Set minibatch generation
         self.__input_encoder = None
