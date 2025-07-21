@@ -11,8 +11,8 @@ def load_hf_model_and_tokenizer(type, path, pretrained, embed_pretrained):
     print("Loading model {}".format(path))
     tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
 
-    # Select class according to type
     config = AutoConfig.from_pretrained(path, trust_remote_code=True)
+    config.vocab_size = len(tokenizer)
 
     n_layers_key = 'num_hidden_layers'
     if hasattr(config, "attribute_map") and n_layers_key in config.attribute_map:
