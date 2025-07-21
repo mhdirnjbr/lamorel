@@ -7,7 +7,7 @@ class ModelTypesEnum(Enum):
     seq2seq = AutoModelForSeq2SeqLM
 
 
-def load_hf_model_and_tokenizer(type, path, pretrained):
+def load_hf_model_and_tokenizer(type, path, pretrained, embed_pretrained):
     print("Loading model {}".format(path))
     tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
 
@@ -20,9 +20,18 @@ def load_hf_model_and_tokenizer(type, path, pretrained):
 
     n_layers = getattr(config, n_layers_key)
     model_class = ModelTypesEnum[type].value
-    if pretrained:
+    
+    if embed_pretrained:
+        print(f"Loading model with pretrained embeddings from {path}.")
+        model_method = lambda **kwargs: model_class.from_pretrained(path, load_embedding=True, **kwargs)
+        
+        
+        
+    elif pretrained:
+        print(f"Loading pretrained model from {path}.")
         model_method = lambda **kwargs: model_class.from_pretrained(path, **kwargs)
     else:
+        print(f"Loading model from config {path}.")
         model_method = lambda **kwargs: model_class.from_config(config, **kwargs)
 
     return tokenizer, model_method, n_layers
