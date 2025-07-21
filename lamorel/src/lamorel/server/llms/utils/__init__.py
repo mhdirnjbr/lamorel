@@ -1,1 +1,1 @@
-from .load_hf_model_and_tokenizer import load_hf_model_and_tokenizer
+from .load_hf_model_and_tokenizer import load_hf_model_and_tokenizer, load_hf_model_with_embedding
