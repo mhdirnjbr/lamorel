@@ -393,4 +393,20 @@ class HF_LLM(BaseLLM):
             torch.cuda.empty_cache()
 
         lamorel_logger.debug(f"Scoring finished on process {self.accelerator.process_index}")
+        
+        
+        
+        # print("\n\n==== DEBUGGING OUTPUT ====")
+        # for idx, context_result in enumerate(_forward_results):
+        #     print(f"\nContext [{idx}]: {contexts[idx]}")
+        #     for i, candidate in enumerate(candidates[idx]):
+        #         print(f"  Candidate {i}: {candidate}")
+        #         for key in module_function_keys:
+        #             score_tensor = context_result[key][i]
+        #             score_value = score_tensor.item() if score_tensor.numel() == 1 else score_tensor.tolist()
+        #             print(f"    {key}: {score_value}")
+        # print("==== END DEBUGGING OUTPUT ====\n\n")
+                
+        
+        
         return _forward_results
